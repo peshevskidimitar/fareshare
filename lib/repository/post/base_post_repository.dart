@@ -3,5 +3,6 @@ import 'package:fareshare/domain/post.dart';
 
 abstract class BasePostRepository {
   Stream<List<Post>> getAllPosts();
+  Stream<List<Post>> getAllPostsByUserId(String userId);
   Future<DocumentReference> addPost(Post post);
 }

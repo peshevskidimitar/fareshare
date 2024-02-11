@@ -1,3 +1,5 @@
+import 'package:fareshare/presentation/widgets/post/user_posts_list.dart';
+import 'package:fareshare/service/blocs/app/app_bloc.dart';
 import 'package:fareshare/service/blocs/reservation/reservation_bloc.dart';
 import 'package:fareshare/domain/post.dart';
 import 'package:fareshare/presentation/widgets/post/post_list_tile.dart';
@@ -55,6 +57,7 @@ class _PostsListState extends State<PostsList> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.select((AppBloc bloc) => bloc.state.user);
     return CustomScrollView(
       slivers: [
         SliverAppBar(
@@ -71,10 +74,28 @@ class _PostsListState extends State<PostsList> {
                 onPressed: () {},
                 icon: const Icon(Icons.search),
               ),
+              trailing: [
+                user.isNotEmpty
+                    ? IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UserPostsList(
+                                posts: widget.posts
+                                    .where((post) => post.userId == user.id)
+                                    .toList(),
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.menu),
+                      )
+                    : const Text('')
+              ],
             ),
           ),
         ),
-        // Next, create a SliverList
         SliverList(
           delegate: SliverChildBuilderDelegate(
             childCount: _filteredPosts.length,

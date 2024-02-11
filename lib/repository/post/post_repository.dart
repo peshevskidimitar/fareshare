@@ -16,6 +16,17 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
+  Stream<List<Post>> getAllPostsByUserId(String userId) {
+    return _firebaseFirestore
+        .collection('posts')
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => Post.fromSnapshot(doc)).toList();
+    });
+  }
+
+  @override
   Future<DocumentReference> addPost(Post post) {
     return _firebaseFirestore.collection('posts').add(post.toJson());
   }

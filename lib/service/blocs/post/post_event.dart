@@ -26,3 +26,12 @@ class AddPost extends PostEvent {
   @override
   List<Object> get props => [post];
 }
+
+class DeletePost extends PostEvent {
+  final String postId;
+
+  const DeletePost(this.postId);
+
+  @override
+  List<Object> get props => [postId];
+}

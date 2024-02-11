@@ -3,6 +3,7 @@ import 'package:fareshare/domain/reservation.dart';
 
 class Post {
   final String? id;
+  final String userId;
   final String departureCity;
   final String arrivalCity;
   final DateTime departureTime;
@@ -13,6 +14,7 @@ class Post {
 
   Post({
     this.id,
+    required this.userId,
     required this.departureCity,
     required this.arrivalCity,
     required this.departureTime,
@@ -25,6 +27,7 @@ class Post {
   factory Post.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return Post(
       id: snapshot.id,
+      userId: snapshot.get('userId'),
       departureCity: snapshot.get('departureCity'),
       arrivalCity: snapshot.get('arrivalCity'),
       departureTime: snapshot.get('departureTime').toDate(),
@@ -36,6 +39,7 @@ class Post {
 
   Map<String, dynamic> toJson() {
     return {
+      'userId': userId,
       'departureCity': departureCity,
       'arrivalCity': arrivalCity,
       'departureTime': departureTime,

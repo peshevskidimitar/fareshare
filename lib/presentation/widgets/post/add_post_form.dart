@@ -1,3 +1,4 @@
+import 'package:fareshare/service/blocs/app/app_bloc.dart';
 import 'package:fareshare/service/blocs/post/post_bloc.dart';
 import 'package:fareshare/domain/post.dart';
 import 'package:flutter/material.dart';
@@ -104,9 +105,11 @@ class _AddPostFormState extends State<AddPostForm> {
 
   void _submitData() {
     if (!_formKey.currentState!.validate()) return;
+    final user = context.select((AppBloc bloc) => bloc.state.user);
     context.read<PostBloc>().add(
           AddPost(
             Post(
+              userId: user.id,
               departureCity: _departureCityController.text.trim(),
               arrivalCity: _arrivalCityController.text.trim(),
               departureTime: _departureTime,

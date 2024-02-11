@@ -1,4 +1,6 @@
-import 'package:fareshare/presentation/pages/auth/auth_page.dart';
+import 'package:fareshare/presentation/pages/auth/login_page.dart';
+import 'package:fareshare/presentation/widgets/post/user_posts_list.dart';
+import 'package:fareshare/service/blocs/app/app_bloc.dart';
 import 'package:fareshare/service/blocs/post/post_bloc.dart';
 import 'package:fareshare/presentation/pages/post/add_post_page.dart';
 import 'package:fareshare/presentation/widgets/post/posts_list.dart';
@@ -14,8 +16,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  void _login() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
+
+  void _logout() {
+    context.read<AppBloc>().add(const AppLogoutRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = context.select((AppBloc bloc) => bloc.state.user);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(72, 40, 61, 1.0),
@@ -28,17 +42,33 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AuthPage()),
-                  );
-                },
-                icon: const Icon(Icons.login)),
-          )
+          user.isEmpty
+              ? Row(
+                  children: [
+                    const Text(
+                      'Најава',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    IconButton(
+                      onPressed: _login,
+                      icon: const Icon(Icons.login),
+                      color: Colors.white,
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    const Text(
+                      'Одјава',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    IconButton(
+                      onPressed: _logout,
+                      icon: const Icon(Icons.logout),
+                      color: Colors.white,
+                    ),
+                  ],
+                )
         ],
       ),
       body: BlocBuilder<PostBloc, PostState>(
@@ -53,10 +83,17 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(164, 139, 156, 1.0),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddPostPage()),
-          );
+          if (user.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddPostPage()),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          }
         },
         child: const Icon(
           Icons.edit_outlined,
