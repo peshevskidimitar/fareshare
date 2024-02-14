@@ -23,9 +23,13 @@ class _PostListTileState extends State<PostListTile> {
         contentPadding: const EdgeInsets.fromLTRB(10, 0, 8, 0),
         title: Row(
           children: [
-            Text(
-              '${widget.post.departureCity} - ${widget.post.arrivalCity}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            SizedBox(
+              width: 150,
+              child: Text(
+                '${widget.post.departureCity} - ${widget.post.arrivalCity}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),

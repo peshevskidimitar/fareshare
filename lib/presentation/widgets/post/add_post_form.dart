@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:fareshare/presentation/widgets/image_picker/image_picker_widget.dart';
 import 'package:fareshare/service/blocs/app/app_bloc.dart';
 import 'package:fareshare/service/blocs/post/post_bloc.dart';
 import 'package:fareshare/domain/post.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class AddPostForm extends StatefulWidget {
@@ -27,6 +33,27 @@ class _AddPostFormState extends State<AddPostForm> {
       TextEditingController();
   final TextEditingController _pricePerPassengerController =
       TextEditingController();
+  XFile? image;
+
+  void _setImage(XFile? image) {
+    this.image = image;
+  }
+
+  Future<String?> _saveImage() async {
+    String uniqueFileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+    try {
+      await referenceImageToUpload.putFile(File(image!.path));
+      return await referenceImageToUpload.getDownloadURL();
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    return null;
+  }
 
   Future<DateTime?> pickDate(DateTime dateTime) => showDatePicker(
         builder: (context, child) {
@@ -103,9 +130,18 @@ class _AddPostFormState extends State<AddPostForm> {
     });
   }
 
-  void _submitData() {
+  Future<void> _submitData() async {
     if (!_formKey.currentState!.validate()) return;
-    final user = context.select((AppBloc bloc) => bloc.state.user);
+    if (image == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Изберете слика.'),
+        ),
+      );
+      return;
+    }
+    Navigator.pop(context);
+    final user = context.read<AppBloc>().state.user;
     context.read<PostBloc>().add(
           AddPost(
             Post(
@@ -117,10 +153,10 @@ class _AddPostFormState extends State<AddPostForm> {
               passengerSeats: int.parse(_passengerSeatsController.text.trim()),
               pricePerPassenger:
                   double.parse(_pricePerPassengerController.text.trim()),
+              vehicleImageUrl: (await _saveImage())!,
             ),
           ),
         );
-    Navigator.pop(context);
   }
 
   @override
@@ -276,9 +312,7 @@ class _AddPostFormState extends State<AddPostForm> {
                   }
                   return null;
                 },
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly
-                ],
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: const TextInputType.numberWithOptions(
                   signed: false,
                   decimal: false,
@@ -316,6 +350,9 @@ class _AddPostFormState extends State<AddPostForm> {
                   decimal: true,
                 ),
               ),
+            ),
+            ImagePickerWidget(
+              setImage: _setImage,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

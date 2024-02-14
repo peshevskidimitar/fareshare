@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 
-class Reservation {
+class Reservation extends Equatable {
   final String? id;
   final String fullName;
   final String address;
   final String phoneNumber;
   final String location;
 
-  Reservation({
+  const Reservation({
     this.id,
     required this.fullName,
     required this.address,
@@ -34,4 +35,13 @@ class Reservation {
       'location': location,
     };
   }
+
+  @override
+  List<Object?> get props => [
+    id,
+    fullName,
+    address,
+    phoneNumber,
+    location,
+  ];
 }

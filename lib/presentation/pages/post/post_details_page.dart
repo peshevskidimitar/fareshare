@@ -66,28 +66,40 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                                 color: Color.fromRGBO(76, 44, 60, 1.0)),
                           ),
                           Text(
-                            'Време на поаѓање: ${DateFormat("kk:mm dd.MM.yy").format(widget.post.departureTime)}',
+                            'Време на поаѓање: ${DateFormat("kk:mm dd.MM.yy")
+                                .format(widget.post.departureTime)}',
                             style: const TextStyle(
                                 color: Color.fromRGBO(76, 44, 60, 1.0)),
                           ),
                           Text(
-                            'Време на пристигнување: ${DateFormat("kk:mm dd.MM.yy").format(widget.post.arrivalTime)}',
+                            'Време на пристигнување: ${DateFormat(
+                                "kk:mm dd.MM.yy").format(widget.post
+                                .arrivalTime)}',
                             style: const TextStyle(
                                 color: Color.fromRGBO(76, 44, 60, 1.0)),
                           ),
                           Text(
-                            'Слободни патнички места: ${widget.post.passengerSeats}',
+                            'Слободни патнички места: ${widget.post
+                                .passengerSeats}',
                             style: const TextStyle(
                                 color: Color.fromRGBO(76, 44, 60, 1.0)),
                           ),
                           Text(
-                            'Цена по патник: ${widget.post.pricePerPassenger.toStringAsFixed(0)} МКД',
+                            'Цена по патник: ${widget.post.pricePerPassenger
+                                .toStringAsFixed(0)} МКД',
                             style: const TextStyle(
                                 color: Color.fromRGBO(76, 44, 60, 1.0)),
                           )
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network(widget.post.vehicleImageUrl),
+                      ),
+                    )
                   ],
                 ),
               ),

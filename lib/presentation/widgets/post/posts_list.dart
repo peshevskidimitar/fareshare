@@ -18,33 +18,29 @@ class PostsList extends StatefulWidget {
 
 class _PostsListState extends State<PostsList> {
   final SearchController _searchController = SearchController();
-  late List<Post> _filteredPosts;
+  String query = '';
 
-  void search(String query) {
+  List<Post> _filteredPosts() {
     if (query.isEmpty) {
-      setState(() {
-        _filteredPosts = widget.posts;
-      });
-    } else {
-      setState(() {
-        _filteredPosts = widget.posts.where((post) {
-          String departureCity = post.departureCity.toLowerCase();
-          String arrivalCity = post.arrivalCity.toLowerCase();
-          return departureCity.contains(query.toLowerCase()) ||
-              arrivalCity.contains(query.toLowerCase());
-        }).toList();
-      });
+      return widget.posts;
     }
+    return widget.posts.where((post) {
+      String departureCity = post.departureCity.toLowerCase();
+      String arrivalCity = post.arrivalCity.toLowerCase();
+      return departureCity.contains(query.toLowerCase()) ||
+          arrivalCity.contains(query.toLowerCase());
+    }).toList();
   }
 
   void queryListener() {
-    search(_searchController.text);
+    setState(() {
+      query = _searchController.text;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _filteredPosts = widget.posts;
     _searchController.addListener(queryListener);
   }
 
@@ -98,14 +94,14 @@ class _PostsListState extends State<PostsList> {
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(
-            childCount: _filteredPosts.length,
+            childCount: _filteredPosts().length,
             (BuildContext context, int index) {
               return BlocProvider(
                 create: (context) => ReservationBloc(
                     reservationRepository:
                         context.read<ReservationRepository>())
-                  ..add(LoadReservations(_filteredPosts[index].id!)),
-                child: PostListTile(post: _filteredPosts[index]),
+                  ..add(LoadReservations(_filteredPosts()[index].id!)),
+                child: PostListTile(post: _filteredPosts()[index]),
               );
             },
           ),

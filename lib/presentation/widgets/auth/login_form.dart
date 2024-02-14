@@ -21,7 +21,7 @@ class LoginForm extends StatelessWidget {
               ),
             );
         } else if (state.status.isSuccess) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).clearSnackBars();
           Navigator.pop(context);
         }
       },

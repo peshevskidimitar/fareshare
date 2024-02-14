@@ -11,7 +11,7 @@ class RegisterForm extends StatelessWidget {
     return BlocListener<RegisterCubit, RegisterState>(
       listener: (context, state) {
         if (state.status.isSuccess) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).clearSnackBars();
           Navigator.of(context).pop();
         } else if (state.status.isFailure) {
           ScaffoldMessenger.of(context)
